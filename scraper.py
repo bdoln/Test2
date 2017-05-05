@@ -12,8 +12,7 @@ import lxml.html
 
 #scrape_tablefunction:getspassedanindividualpagetoscrape
 def scrape_table(root):
-    rows = root.cssselect("table.data tr") # selects all <tr blocks within <table class="\
-data"
+    rows = root.cssselect("table.data tr") # selects all <tr blocks within <table class="data"
     for row in rows:
         # Set up our data record - we'll need it later
         record = {}
