@@ -5,8 +5,6 @@
 
 import scraperwiki
 html = scraperwiki.scrape('http://inmo.ie/6022')
-print "Click on the ...more link to see the whole page"
-print html
 
 #---------------------------
 #1.ParsetherawHTMLtogettheinterestingbits-thepartinside<tdtags.
@@ -20,9 +18,6 @@ print html
 import lxml.html
 root = lxml.html.fromstring(html) #turnourHTMLintoanlxmlobject
 tds = root.cssselect('td') #getallthe<tdtags
-for td in tds:
-  print lxml.html.tostring(td) # the full HTML tag
-  print td.text # just the text inside the HTML tag
 
 #---------------------------
 #2.SavethedataintheScraperWikidatastore.
@@ -32,13 +27,11 @@ for td in tds:
 #---------------------------
 
 for td in tds:
-  record = { "td" : td.text } # column name and value
-  try:
-    scraperwiki.sqlite.save(["td"], record) # save the records one by one
-  except:
-    record = { "td" : "NO ENTRY" } # column name and value
-    scraperwiki.sqlite.save(["td"], record) # save the records one by one
-
+  print td.text_content() # just the text inside the HTML tag
+for td in tds:
+  record = { "td" : td.text_content() } # column name and value
+  scraperwiki.sqlite.save(["td"], record) # save the records one by one
+  
 #---------------------------
 #GobacktotheTutorialspageandcontinuetoTutorial3tolearnabout
 #morecomplexscrapingmethods.
