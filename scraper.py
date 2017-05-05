@@ -46,6 +46,6 @@ def scrape_and_look_for_next_link(url):
 # call a function to scrape the first page in the series.
 # -------------------------------------------------------------
 base_url = 'https://paulbradshaw.github.io/'
-starting_url = urlparse.urljoin(base__url, 'scraping-for-everyone/webpages/example_table_1.html')
+starting_url = urlparse.urljoin(base_url, 'scraping-for-everyone/webpages/example_table_1.html')
 scrape_and_look_for_next_link(starting_url)
             
