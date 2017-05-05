@@ -16,7 +16,8 @@ def scrape_table(root):
     for row in rows:
         # Set up our data record - we'll need it later
         record = {}
-        table_cells = row.cssselect("td") if table_cells:
+        table_cells = row.cssselect("td") 
+        if table_cells:
             record['Artist'] = table_cells[0].text 
             record['Album'] = table_cells[1].text 
             record['Released'] = table_cells[2].text 
