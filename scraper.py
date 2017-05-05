@@ -1,38 +1,51 @@
-####################################
-#STARTHERE:Tutorial2:Basicscrapingandsavingtothedatastore.
-#FollowtheactionslistedinBLOCKCAPITALSbelow.
-####################################
+############################################################################### 
+#STARTHERE:Tutorial3:Moreadvancedscraping.Showshowtofollow'next' 
+#linksfrompagetopage:usefunctions,soyoucancallthesamecode 
+#repeatedly.SCROLLTOTHEBOTTOMTOSEETHESTARTOFTHESCRAPER. 
+###############################################################################
 
-import scraperwiki
-html = scraperwiki.scrape('http://inmo.ie/6022')
-
-#---------------------------
-#1.ParsetherawHTMLtogettheinterestingbits-thepartinside<tdtags.
-#--UNCOMMENTTHE6LINESBELOW(i.e.deletethe#atthestartofthelines)
-#--CLICKTHE'RUN'BUTTONBELOW
-#Checkthe'Console'tabagain,andyou'llseehowwe'reextracting
-#theHTMLthatwasinside<td</tdtags.
-#Weuselxml,whichisaPythonlibraryespeciallyforparsinghtml.
-#---------------------------
-
+import scraperwiki 
+import urlparse 
 import lxml.html
-root = lxml.html.fromstring(html) #turnourHTMLintoanlxmlobject
-tds = root.cssselect('td') #getallthe<tdtags
 
-#---------------------------
-#2.SavethedataintheScraperWikidatastore.
-#--UNCOMMENTTHETHREELINESBELOW
-#--CLICKTHE'RUN'BUTTONBELOW
-#Checkthe'Data'tab-hereyou'llseethedatasavedintheScraperWikistore.
-#---------------------------
 
-for td in tds:
-  print td.text_content() # just the text inside the HTML tag
-for td in tds:
-  record = { "td" : td.text_content() } # column name and value
-  scraperwiki.sqlite.save(["td"], record) # save the records one by one
-  
-#---------------------------
-#GobacktotheTutorialspageandcontinuetoTutorial3tolearnabout
-#morecomplexscrapingmethods.
-#---------------------------
+
+#scrape_tablefunction:getspassedanindividualpagetoscrape
+def scrape_table(root):
+    rows = root.cssselect("table.data tr") # selects all <tr blocks within <table class="\
+data"
+    for row in rows:
+        # Set up our data record - we'll need it later
+        record = {}
+        table_cells = row.cssselect("td") if table_cells:
+          record['Artist'] = table_cells[0].text 
+          record['Album'] = table_cells[1].text 
+          record['Released'] = table_cells[2].text 
+          record['Sales m'] = table_cells[4].text 
+          # Print out the data we've gathered 
+          print record, '------------'
+          # Finally, save the record to the datastore - 'Artist' is our unique key
+          scraperwiki.sqlite.save(["Artist"], record)
+          
+#scrape_and_look_for_next_linkfunction:callsthescrape_table
+#function,thenhuntsfora'next'link:ifoneisfound,callsitselfagain
+def scrape_and_look_for_next_link(url):
+  html = scraperwiki.scrape(url)
+  print html
+  root = lxml.html.fromstring(html)
+  scrape_table(root)
+  next_link = root.cssselect("a.next")
+  print next_link
+  if next_link:
+    next_url = urlparse.urljoin(base_url, next_link[0].attrib.get('href'))
+    print next_url
+    scrape_and_look_for_next_link(next_url)
+    
+# ------------------------------------------------------------
+# START HERE: define your starting URL - then
+# call a function to scrape the first page in the series.
+# -------------------------------------------------------------
+base_url = 'https://paulbradshaw.github.io/'
+starting_url = urlparse.urljoin(base__url, 'scraping-for-everyone/webpages/example_table_1.html')
+scrape_and_look_for_next_link(starting_url)
+            
